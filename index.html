@@ -3,184 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>tg quiz</title>
+    <title>Неоновый Квиз Цены</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- GSAP Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
     <!-- Telegram Web App -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Шрифт Unbounded -->
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        @keyframes pulse-bg {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes pulse-btn {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+
         body {
             font-family: 'Unbounded', sans-serif;
             background-color: #000000;
             color: #e5e5e5;
-            background-image: radial-gradient(circle at 50% 10%, #0a0a0a, #000000 80%);
+            background: linear-gradient(-45deg, #000000, #0a0a0a, #000000, #1a112a);
+            background-size: 400% 400%;
+            animation: pulse-bg 15s ease infinite;
             min-height: 100vh;
             overflow: hidden;
         }
+        #welcome-screen {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 20;
+            opacity: 0;
+        }
+        #start-btn {
+            background: #6366f1;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+            animation: pulse-btn 2s infinite;
+            transition: transform 0.2s ease-out, background 0.2s ease-out;
+        }
+        #start-btn:hover {
+            transform: scale(1.05);
+            background: #7173f5;
+        }
         #quiz-container {
-            background-color: rgba(13, 13, 13, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(13, 13, 13, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: 1.5rem;
             border: 1px solid rgba(79, 70, 229, 0.2);
-            box-shadow: 0 0 30px rgba(79, 70, 229, 0.15);
+            box-shadow: 0 0 40px rgba(79, 70, 229, 0.15), inset 0 0 10px rgba(79, 70, 229, 0.1);
             opacity: 0;
             transform: translateY(20px);
+            visibility: hidden;
         }
-        #quiz-steps { position: relative; min-height: 350px; }
+        #progress-bar-container {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+            height: 8px;
+            overflow: hidden;
+        }
+        #progress-bar {
+            background: linear-gradient(90deg, #4f46e5, #a78bfa);
+            height: 100%;
+            width: 0%;
+            border-radius: 9999px;
+            transition: width 0.5s ease-out;
+        }
+        #quiz-steps { position: relative; min-height: 380px; }
         .quiz-step { position: absolute; top: 0; left: 0; width: 100%; transition: none !important; }
         .btn-quiz {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid #1f1f1f;
+            border: 1px solid #2a2a2a;
             background-color: #1a1a1a;
         }
-        .btn-quiz:hover, .btn-quiz:active, .btn-quiz.selected {
-            background-color: #2a2a2a;
+        .btn-quiz:hover, .btn-quiz.selected {
+            background-color: #252525;
             border-color: #6366f1;
             box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
-            transform: scale(1.01);
+            transform: translateY(-2px);
             @apply ring-2 ring-indigo-500/70;
         }
         .icon { margin-right: 0.75rem; width: 24px; height: 24px; flex-shrink: 0; }
         .step-info { letter-spacing: 0.05em; text-transform: uppercase; }
-        #prev-btn { transition: all 0.2s; color: #4f46e5; }
-        #prev-btn:hover { background-color: #1a1a1a; color: #818cf8; }
+        #prev-btn { transition: all 0.2s; color: #6366f1; }
+        #prev-btn:hover { background-color: rgba(99, 102, 241, 0.1); color: #818cf8; }
+        .step-title { min-height: 3rem; }
     </style>
 </head>
 <body class="p-4 sm:p-8 min-h-screen flex justify-center items-start pt-10">
-    <div id="quiz-container" class="w-full max-w-md sm:max-w-lg p-6 sm:p-8">
-        <div id="header" class="mb-6">
-            <h2 id="welcome-message" class="text-lg text-gray-400 font-light mb-2"></h2>
-            <h1 class="text-2xl sm:text-3xl font-bold tracking-tighter text-white mb-2">
-                <span class="text-indigo-400">узнай цену за 3 клика</span>
+
+    <div id="welcome-screen">
+        <h1 id="welcome-title" class="text-4xl sm:text-5xl font-bold tracking-tighter text-white mb-4">Привет!</h1>
+        <p class="text-gray-400 max-w-sm mb-8">Ответьте на 5 простых вопросов, чтобы мы могли рассчитать стоимость вашего проекта.</p>
+        <button id="start-btn" class="text-white font-bold py-3 px-8 rounded-full text-lg">Начать</button>
+    </div>
+
+    <div id="quiz-container" class="w-full max-w-md sm:max-w-lg p-6 sm:p-8 relative">
+        <div id="header" class="mb-4">
+            <div id="progress-bar-container" class="mb-4">
+                <div id="progress-bar"></div>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tighter text-white">
+                <span class="text-indigo-400">узнай цену за 5 кликов</span>
             </h1>
-            <div id="steps-container" class="mt-4 flex space-x-1"></div>
         </div>
 
         <div id="quiz-steps">
-            <!-- step 1: тип проекта -->
-            <div data-step="1" class="quiz-step">
-                <p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 1 / 3</p>
-                <p class="text-xl mb-8 font-extrabold text-white">что нужно сделать?</p>
-                <div class="space-y-4">
-                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="project_type" data-value="telegram bot"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#0088CC"><path d="M2.14753 11.8099C7.3949 9.52374 10.894 8.01654 12.6447 7.28833C17.6435 5.20916 18.6822 4.84799 19.3592 4.83606C19.5081 4.83344 19.8411 4.87034 20.0567 5.04534C20.2388 5.1931 20.2889 5.39271 20.3129 5.5328C20.3369 5.6729 20.3667 5.99204 20.343 6.2414C20.0721 9.08763 18.9 15.9947 18.3037 19.1825C18.0514 20.5314 17.5546 20.9836 17.0736 21.0279C16.0283 21.1241 15.2345 20.3371 14.2221 19.6735C12.6379 18.635 11.7429 17.9885 10.2051 16.9751C8.42795 15.804 9.58001 15.1603 10.5928 14.1084C10.8579 13.8331 15.4635 9.64397 15.5526 9.26395C15.5637 9.21642 15.5741 9.03926 15.4688 8.94571C15.3636 8.85216 15.2083 8.88415 15.0962 8.9096C14.9373 8.94566 12.4064 10.6184 7.50365 13.928C6.78528 14.4212 6.13461 14.6616 5.55163 14.649C4.90893 14.6351 3.67265 14.2856 2.7536 13.9869C1.62635 13.6204 0.730432 13.4267 0.808447 12.8044C0.849081 12.4803 1.29544 12.1488 2.14753 11.8099Z"/></svg>Телеграм бот</button>
-                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="project_type" data-value="web app / service"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#00C49F"><path d="M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM20 10H4V19H20V10ZM15 6V8H19V6H15Z"/></svg>Веб-сервис</button>
-                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="project_type" data-value="integration / backend"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFA500"><path d="M5 11H19V5H5V11ZM21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3H20C20.5523 3 21 3.44772 21 4ZM19 13H5V19H19V13ZM7 15H10V17H7V15ZM7 7H10V9H7V7Z"></path></svg>Интеграция / Backend</button>
-                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="project_type" data-value="other"><span class="icon text-gray-400 font-bold text-2xl leading-none flex justify-center items-center">⋯</span> Другое</button>
-                </div>
-            </div>
-
-            <!-- step 2: есть ли тз -->
-            <div data-step="2" class="quiz-step">
-                <p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 2 / 3</p>
-                <p class="text-xl mb-8 font-extrabold text-white">есть ТЗ или описание?</p>
-                <div class="space-y-4">
-                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="has_spec" data-value="yes"><span class="icon text-green-500 font-bold text-xl leading-none flex justify-center items-center">✓</span> Да, все готово</button>
-                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="has_spec" data-value="draft / idea"><span class="icon text-yellow-500 font-bold text-xl leading-none flex justify-center items-center">✎</span> Черновик / Есть идея</button>
-                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="has_spec" data-value="no, help needed"><span class="icon text-red-500 font-bold text-xl leading-none flex justify-center items-center">✗</span> Нет, нужна помощь</button>
-                </div>
-            </div>
-
-            <!-- step 3: бюджет -->
-            <div data-step="3" class="quiz-step">
-                <p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 3 / 3</p>
-                <p class="text-xl mb-8 font-extrabold text-white">ожидаемый бюджет?</p>
-                <div class="space-y-4">
-                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="< 500$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-4a4 4 0 0 0 0 8h4"/><path d="M12 4v4m0 8v4"/></svg><span class="text-green-400 font-medium mr-2">Start</span> < 500$</button>
-                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="500$ - 3000$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/><path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/></svg><span class="text-yellow-400 font-medium mr-2">Medium</span> 500$ - 3000$</button>
-                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="> 3000$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="text-red-400 font-medium mr-2">Pro</span> > 3000$</button>
-                </div>
-            </div>
+            <div data-step="1" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 1 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="что нужно сделать?"></p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="project_type" data-value="telegram bot"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#0088CC"><path d="M2.14753 11.8099C7.3949 9.52374 10.894 8.01654 12.6447 7.28833C17.6435 5.20916 18.6822 4.84799 19.3592 4.83606C19.5081 4.83344 19.8411 4.87034 20.0567 5.04534C20.2388 5.1931 20.2889 5.39271 20.3129 5.5328C20.3369 5.6729 20.3667 5.99204 20.343 6.2414C20.0721 9.08763 18.9 15.9947 18.3037 19.1825C18.0514 20.5314 17.5546 20.9836 17.0736 21.0279C16.0283 21.1241 15.2345 20.3371 14.2221 19.6735C12.6379 18.635 11.7429 17.9885 10.2051 16.9751C8.42795 15.804 9.58001 15.1603 10.5928 14.1084C10.8579 13.8331 15.4635 9.64397 15.5526 9.26395C15.5637 9.21642 15.5741 9.03926 15.4688 8.94571C15.3636 8.85216 15.2083 8.88415 15.0962 8.9096C14.9373 8.94566 12.4064 10.6184 7.50365 13.928C6.78528 14.4212 6.13461 14.6616 5.55163 14.649C4.90893 14.6351 3.67265 14.2856 2.7536 13.9869C1.62635 13.6204 0.730432 13.4267 0.808447 12.8044C0.849081 12.4803 1.29544 12.1488 2.14753 11.8099Z"/></svg>Телеграм бот</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="project_type" data-value="web app / service"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#00C49F"><path d="M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM20 10H4V19H20V10ZM15 6V8H19V6H15Z"/></svg>Веб-сервис</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="project_type" data-value="integration / backend"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFA500"><path d="M5 11H19V5H5V11ZM21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3H20C20.5523 3 21 3.44772 21 4ZM19 13H5V19H19V13ZM7 15H10V17H7V15ZM7 7H10V9H7V7Z"></path></svg>Интеграция / Backend</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="project_type" data-value="other"><span class="icon text-gray-400 font-bold text-2xl leading-none flex justify-center items-center">⋯</span> Другое</button></div></div>
+            <div data-step="2" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 2 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="есть ТЗ или описание?"></p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="has_spec" data-value="yes"><span class="icon text-green-500 font-bold text-xl leading-none flex justify-center items-center">✓</span> Да, все готово</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="has_spec" data-value="draft / idea"><span class="icon text-yellow-500 font-bold text-xl leading-none flex justify-center items-center">✎</span> Черновик / Есть идея</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="has_spec" data-value="no, help needed"><span class="icon text-red-500 font-bold text-xl leading-none flex justify-center items-center">✗</span> Нет, нужна помощь</button></div></div>
+            <div data-step="3" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 3 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="нужен ли дизайн?"></p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="design" data-value="from scratch"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>Да, с нуля</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="design" data-value="has mockups"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Есть UI-кит / макеты</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="design" data-value="not required"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>Не требуется</button></div></div>
+            <div data-step="4" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 4 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="какие сроки?"></p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="deadline" data-value="urgent"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2z"></polygon></svg>Срочно (до 2 недель)</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="deadline" data-value="standard"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>Стандартно (1-2 месяца)</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="deadline" data-value="flexible"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><path d="M20 6 9 17l-5-5"></path></svg>Гибкие сроки</button></div></div>
+            <div data-step="5" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 5 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="ожидаемый бюджет?"></p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="< 500$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-4a4 4 0 0 0 0 8h4"/><path d="M12 4v4m0 8v4"/></svg><span class="text-green-400 font-medium mr-2">Start</span> < 500$</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="500$ - 3000$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/><path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/></svg><span class="text-yellow-400 font-medium mr-2">Medium</span> 500$ - 3000$</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="> 3000$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="text-red-400 font-medium mr-2">Pro</span> > 3000$</button></div></div>
         </div>
 
-        <div class="mt-6 flex justify-between">
-            <button id="prev-btn" class="p-2 text-sm rounded-lg font-medium hidden" onclick="prevStep()">← Назад</button>
+        <div class="mt-8 flex justify-between">
+            <button id="prev-btn" class="p-2 text-sm rounded-lg font-medium hidden">← Назад</button>
         </div>
     </div>
 
     <script>
+        gsap.registerPlugin(TextPlugin);
+
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
-        const steps = 3; // УБРАЛИ 4-Й ШАГ
+        const steps = 5;
         let currentStep = 1;
         const quizData = {};
-        const quizSteps = document.querySelectorAll('.quiz-step');
-        const prevBtn = document.getElementById('prev-btn');
-        const stepsContainer = document.getElementById('steps-container');
+
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const startBtn = document.getElementById('start-btn');
         const quizContainer = document.getElementById('quiz-container');
-        const welcomeMessageEl = document.getElementById('welcome-message');
+        const welcomeTitle = document.getElementById('welcome-title');
+        const prevBtn = document.getElementById('prev-btn');
+        const progressBar = document.getElementById('progress-bar');
 
-        function updateStepIndicators(animate = true) {
-            stepsContainer.innerHTML = '';
-            for (let i = 1; i <= steps; i++) {
-                const indicator = document.createElement('div');
-                indicator.className = 'w-1/3 h-2 rounded-full mx-0.5 transition-all duration-500'; // ИЗМЕНЕНО НА w-1/3
-                indicator.style.transformOrigin = 'left center';
-                if (i < currentStep) {
-                    indicator.classList.add('bg-indigo-600');
-                } else if (i === currentStep) {
-                    indicator.classList.add('bg-indigo-400');
-                    if (animate) {
-                         gsap.fromTo(indicator, { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: 'power2.out' });
-                    }
-                } else {
-                    indicator.classList.add('bg-gray-700');
-                }
-                stepsContainer.appendChild(indicator);
-            }
+        function updateProgressBar() {
+            const progress = currentStep > 1 ? ((currentStep - 1) / (steps - 1)) * 100 : 0;
+            gsap.to(progressBar, {
+                width: `${progress}%`,
+                duration: 0.4,
+                ease: 'power2.out'
+            });
         }
 
-        function updateUI(isInitial = false) {
-            updateStepIndicators(!isInitial);
+        function updateUI() {
             updateMainButtonState();
+            updateProgressBar();
             prevBtn.classList.toggle('hidden', currentStep === 1);
+
+            const currentStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
+            const titleEl = currentStepEl.querySelector('.step-title');
+            const titleText = titleEl.dataset.title;
+            gsap.fromTo(titleEl, { text: "" }, { text: titleText, duration: 0.5, ease: 'none' });
         }
+
+        function transitionStep(nextStep, direction) {
+            const oldStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
+            const newStepEl = document.querySelector(`.quiz-step[data-step="${nextStep}"]`);
+
+            const xTo = direction === 'forward' ? -40 : 40;
+            const xFrom = direction === 'forward' ? 40 : -40;
+
+            // Make new step visible and set its starting position for the animation
+            gsap.set(newStepEl, { visibility: 'visible', opacity: 0, x: xFrom });
+
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    gsap.set(oldStepEl, { visibility: 'hidden' });
+                    currentStep = nextStep;
+                    updateUI();
+                }
+            });
+
+            tl.to(oldStepEl, { opacity: 0, x: xTo, duration: 0.3, ease: 'power2.in' })
+              .to(newStepEl, { opacity: 1, x: 0, duration: 0.3, ease: 'power2.out' }, "-=0.2");
+        }
+
 
         function advanceStep(value, key) {
             if (value && key) quizData[key] = value;
             if (currentStep < steps) {
-                const oldStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
-                currentStep++;
-                const newStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
-                gsap.timeline()
-                    .to(oldStepEl, { opacity: 0, x: -30, duration: 0.3, ease: 'power2.in' })
-                    .set(oldStepEl, { visibility: 'hidden' })
-                    .set(newStepEl, { visibility: 'visible', x: 30, opacity: 0})
-                    .add(() => updateUI())
-                    .to(newStepEl, { opacity: 1, x: 0, duration: 0.4, ease: 'power2.out' });
+                transitionStep(currentStep + 1, 'forward');
             } else {
-                updateUI();
+                updateMainButtonState();
             }
         }
 
         function prevStep() {
             if (currentStep > 1) {
-                const oldStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
-                currentStep--;
-                const newStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
-                 gsap.timeline()
-                    .to(oldStepEl, { opacity: 0, x: 30, duration: 0.3, ease: 'power2.in' })
-                    .set(oldStepEl, { visibility: 'hidden' })
-                    .set(newStepEl, { visibility: 'visible', x: -30, opacity: 0})
-                    .add(() => updateUI())
-                    .to(newStepEl, { opacity: 1, x: 0, duration: 0.4, ease: 'power2.out' });
+                transitionStep(currentStep - 1, 'backward');
+            }
+        }
+        prevBtn.addEventListener('click', prevStep);
+
+        function sendQuizDataToBot() {
+            try {
+                tg.MainButton.showProgress();
+                const jsonData = JSON.stringify(quizData);
+                tg.sendData(jsonData);
+            } catch (e) {
+                tg.showAlert(`Произошла ошибка при отправке: ${e.toString()}`);
+                tg.MainButton.hideProgress();
             }
         }
 
-        function sendQuizDataToBot() {
-            tg.MainButton.showProgress();
-            const jsonData = JSON.stringify(quizData);
-            tg.sendData(jsonData);
-        }
-
         function updateMainButtonState() {
-            // Кнопка появляется ТОЛЬКО на последнем шаге
             if (currentStep === steps) {
                 tg.MainButton.setText("ПОДТВЕРДИТЬ И ОТПРАВИТЬ");
                 tg.MainButton.show();
@@ -192,12 +233,30 @@
 
         document.querySelectorAll('.btn-quiz').forEach(button => {
             button.addEventListener('click', (e) => {
-                const clickedButton = e.currentTarget;
-                clickedButton.classList.add('selected');
-                advanceStep(clickedButton.dataset.value, clickedButton.dataset.key);
-                setTimeout(() => clickedButton.classList.remove('selected'), 300);
+                gsap.to(e.currentTarget, { scale: 0.98, duration: 0.1, yoyo: true, repeat: 1 });
+                advanceStep(e.currentTarget.dataset.value, e.currentTarget.dataset.key);
             });
         });
+
+        function startQuiz() {
+            gsap.timeline()
+                .to(welcomeScreen, {
+                    opacity: 0,
+                    duration: 0.5,
+                    ease: 'power2.inOut',
+                    onComplete: () => { welcomeScreen.style.display = 'none'; }
+                })
+                .set(quizContainer, { visibility: 'visible' })
+                .to(quizContainer, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: 'power3.out',
+                    onStart: () => {
+                        updateUI();
+                    }
+                });
+        }
 
         window.onload = function() {
             tg.onEvent('mainButtonClicked', sendQuizDataToBot);
@@ -206,24 +265,21 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const userDataParam = urlParams.get('user_data');
                 if (userDataParam) {
-                    const decodedStr = atob(userDataParam);
-                    const userData = JSON.parse(decodedStr);
+                    const userData = JSON.parse(atob(userDataParam));
                     if (userData.first_name) {
-                        welcomeMessageEl.textContent = `Привет, ${userData.first_name}!`;
+                        welcomeTitle.textContent = `Привет, ${userData.first_name}!`;
                     }
                 }
             } catch (e) {
                 console.error("Не удалось прочитать данные пользователя:", e);
-                welcomeMessageEl.textContent = 'Добро пожаловать!';
             }
 
-            gsap.set(quizSteps, { visibility: 'hidden' });
-            gsap.set(document.querySelector('.quiz-step[data-step="1"]'), { visibility: 'visible', opacity: 1 });
-
-            gsap.to(quizContainer, {
-                opacity: 1, y: 0, duration: 0.8, delay: 0.1, ease: 'power3.out',
-                onStart: () => updateUI(true)
+            document.querySelectorAll('.quiz-step').forEach((el, index) => {
+                el.style.visibility = index === 0 ? 'visible' : 'hidden';
             });
+
+            gsap.to(welcomeScreen, { opacity: 1, duration: 0.5, delay: 0.1 });
+            startBtn.addEventListener('click', startQuiz);
         };
     </script>
 </body>
