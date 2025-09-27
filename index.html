@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Неоновый Квиз Цены</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <!-- Telegram Web App -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Шрифт Unbounded -->
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Unbounded', sans-serif;
+            background-color: #000000;
+            color: #e5e5e5;
+            background-image: radial-gradient(circle at 50% 10%, #0a0a0a, #000000 80%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        #quiz-container {
+            background-color: rgba(13, 13, 13, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            box-shadow: 0 0 30px rgba(79, 70, 229, 0.15);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        #quiz-steps { position: relative; min-height: 350px; }
+        .quiz-step { position: absolute; top: 0; left: 0; width: 100%; transition: none !important; }
+        .btn-quiz {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #1f1f1f;
+            background-color: #1a1a1a;
+        }
+        .btn-quiz:hover, .btn-quiz:active, .btn-quiz.selected {
+            background-color: #2a2a2a;
+            border-color: #6366f1;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+            transform: scale(1.01);
+            @apply ring-2 ring-indigo-500/70;
+        }
+        input {
+            background-color: #1a1a1a !important;
+            border-color: #333333 !important;
+            color: white !important;
+            transition: all 0.3s;
+        }
+        input:focus {
+            outline: none !important;
+            border-color: #6366f1 !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+        }
+        .icon { margin-right: 0.75rem; width: 24px; height: 24px; flex-shrink: 0; }
+        .step-info { letter-spacing: 0.05em; text-transform: uppercase; }
+        #prev-btn { transition: all 0.2s; color: #4f46e5; }
+        #prev-btn:hover { background-color: #1a1a1a; color: #818cf8; }
+    </style>
+</head>
+<body class="p-4 sm:p-8 min-h-screen flex justify-center items-start pt-10">
+    <div id="quiz-container" class="w-full max-w-md sm:max-w-lg p-6 sm:p-8">
+        <div id="header" class="mb-6">
+            <!-- Шаг 2: Персонализация -->
+            <h2 id="welcome-message" class="text-lg text-gray-400 font-light mb-2"></h2>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tighter text-white mb-2">
+                <span class="text-indigo-400">узнай цену за 4 клика</span>
+            </h1>
+            <div id="steps-container" class="mt-4 flex space-x-1"></div>
+        </div>
+
+        <div id="quiz-steps">
+            <!-- Шаги 1-3 (без изменений) -->
+            <div data-step="1" class="quiz-step">
+                <p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 1 / 4</p>
+                <p class="text-xl mb-8 font-extrabold text-white">что нужно сделать?</p>
+                <div class="space-y-4">
+                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="project_type" data-value="telegram bot"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#0088CC"><path d="M2.14753 11.8099C7.3949 9.52374 10.894 8.01654 12.6447 7.28833C17.6435 5.20916 18.6822 4.84799 19.3592 4.83606C19.5081 4.83344 19.8411 4.87034 20.0567 5.04534C20.2388 5.1931 20.2889 5.39271 20.3129 5.5328C20.3369 5.6729 20.3667 5.99204 20.343 6.2414C20.0721 9.08763 18.9 15.9947 18.3037 19.1825C18.0514 20.5314 17.5546 20.9836 17.0736 21.0279C16.0283 21.1241 15.2345 20.3371 14.2221 19.6735C12.6379 18.635 11.7429 17.9885 10.2051 16.9751C8.42795 15.804 9.58001 15.1603 10.5928 14.1084C10.8579 13.8331 15.4635 9.64397 15.5526 9.26395C15.5637 9.21642 15.5741 9.03926 15.4688 8.94571C15.3636 8.85216 15.2083 8.88415 15.0962 8.9096C14.9373 8.94566 12.4064 10.6184 7.50365 13.928C6.78528 14.4212 6.13461 14.6616 5.55163 14.649C4.90893 14.6351 3.67265 14.2856 2.7536 13.9869C1.62635 13.6204 0.730432 13.4267 0.808447 12.8044C0.849081 12.4803 1.29544 12.1488 2.14753 11.8099Z"/></svg>Телеграм бот (TWA)</button>
+                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="project_type" data-value="web app / service"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#00C49F"><path d="M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM20 10H4V19H20V10ZM15 6V8H19V6H15Z"/></svg>Веб-сервис / SaaS</button>
+                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="project_type" data-value="integration / backend"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFA500"><path d="M5 11H19V5H5V11ZM21 4V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3H20C20.5523 3 21 3.44772 21 4ZM19 13H5V19H19V13ZM7 15H10V17H7V15ZM7 7H10V9H7V7Z"></path></svg>Интеграция / Backend</button>
+                    <button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="project_type" data-value="other"><span class="icon text-gray-400 font-bold text-2xl leading-none flex justify-center items-center">⋯</span> Другое</button>
+                </div>
+            </div>
+            <div data-step="2" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 2 / 4</p><p class="text-xl mb-8 font-extrabold text-white">есть ТЗ или описание?</p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="has_spec" data-value="yes"><span class="icon text-green-500 font-bold text-xl leading-none flex justify-center items-center">✓</span> Да, все готово</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="has_spec" data-value="draft / idea"><span class="icon text-yellow-500 font-bold text-xl leading-none flex justify-center items-center">✎</span> Черновик / Есть идея</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="has_spec" data-value="no, help needed"><span class="icon text-red-500 font-bold text-xl leading-none flex justify-center items-center">✗</span> Нет, нужна помощь</button></div></div>
+            <div data-step="3" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 3 / 4</p><p class="text-xl mb-8 font-extrabold text-white">ожидаемый бюджет?</p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="< 500$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-4a4 4 0 0 0 0 8h4"/><path d="M12 4v4m0 8v4"/></svg><span class="text-green-400 font-medium mr-2">Start</span> < 500$</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="500$ - 3000$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/><path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/></svg><span class="text-yellow-400 font-medium mr-2">Medium</span> 500$ - 3000$</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="> 3000$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="text-red-400 font-medium mr-2">Pro</span> > 3000$</button></div></div>
+
+            <!-- step 4: контакты -->
+            <div data-step="4" class="quiz-step">
+                <p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 4 / 4</p>
+                <p class="text-xl mb-8 font-extrabold text-white">оставь свой контакт</p>
+                <div class="space-y-4">
+                    <input type="text" id="name" placeholder="Имя (обязательно)" class="w-full p-4 border rounded-lg" required>
+                    <input type="text" id="contact" placeholder="Telegram / Email (обязательно)" class="w-full p-4 border rounded-lg" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 flex justify-between">
+            <button id="prev-btn" class="p-2 text-sm rounded-lg font-medium hidden" onclick="prevStep()">← Назад</button>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        const steps = 4;
+        let currentStep = 1;
+        const quizData = {};
+        const quizSteps = document.querySelectorAll('.quiz-step');
+        const prevBtn = document.getElementById('prev-btn');
+        const stepsContainer = document.getElementById('steps-container');
+        const quizContainer = document.getElementById('quiz-container');
+        const nameInput = document.getElementById('name');
+        const contactInput = document.getElementById('contact');
+        const welcomeMessageEl = document.getElementById('welcome-message');
+
+        function updateStepIndicators(animate = true) {
+            stepsContainer.innerHTML = '';
+            for (let i = 1; i <= steps; i++) {
+                const indicator = document.createElement('div');
+                indicator.className = 'w-1/4 h-2 rounded-full mx-0.5 transition-all duration-500';
+                indicator.style.transformOrigin = 'left center';
+                if (i < currentStep) {
+                    indicator.classList.add('bg-indigo-600');
+                } else if (i === currentStep) {
+                    indicator.classList.add('bg-indigo-400');
+                    if (animate) {
+                         gsap.fromTo(indicator, { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: 'power2.out' });
+                    }
+                } else {
+                    indicator.classList.add('bg-gray-700');
+                }
+                stepsContainer.appendChild(indicator);
+            }
+        }
+
+        function updateUI(isInitial = false) {
+            updateStepIndicators(!isInitial);
+            updateMainButtonState();
+            prevBtn.classList.toggle('hidden', currentStep === 1);
+        }
+
+        function advanceStep(value, key) {
+            if (value && key) quizData[key] = value;
+            if (currentStep < steps) {
+                const oldStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
+                currentStep++;
+                const newStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
+                gsap.timeline()
+                    .to(oldStepEl, { opacity: 0, x: -30, duration: 0.3, ease: 'power2.in' })
+                    .set(oldStepEl, { visibility: 'hidden' })
+                    .set(newStepEl, { visibility: 'visible', x: 30, opacity: 0})
+                    .add(() => updateUI())
+                    .to(newStepEl, { opacity: 1, x: 0, duration: 0.4, ease: 'power2.out' });
+            } else {
+                updateUI();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                const oldStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
+                currentStep--;
+                const newStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
+                 gsap.timeline()
+                    .to(oldStepEl, { opacity: 0, x: 30, duration: 0.3, ease: 'power2.in' })
+                    .set(oldStepEl, { visibility: 'hidden' })
+                    .set(newStepEl, { visibility: 'visible', x: -30, opacity: 0})
+                    .add(() => updateUI())
+                    .to(newStepEl, { opacity: 1, x: 0, duration: 0.4, ease: 'power2.out' });
+            }
+        }
+
+        // --- Шаг 3: Передача данных из Web App обратно в бота ---
+        function sendQuizDataToBot() {
+            if (currentStep !== steps) return;
+            quizData.name = nameInput.value.trim();
+            quizData.contact = contactInput.value.trim();
+
+            if (quizData.name === '' || quizData.contact === '') {
+                tg.showAlert("Пожалуйста, заполните имя и контакт для связи.");
+                return;
+            }
+            tg.MainButton.showProgress();
+
+            // Собираем все ответы пользователя в один объект
+            const jsonData = JSON.stringify(quizData);
+
+            // Отправляем данные напрямую боту
+            tg.sendData(jsonData);
+
+            // Web App закроется автоматически после вызова sendData,
+            // но для надежности можно добавить tg.close()
+            // tg.close();
+        }
+
+        function updateMainButtonState() {
+            if (currentStep < steps) {
+                tg.MainButton.hide();
+            } else {
+                tg.MainButton.setText("ОТПРАВИТЬ ОТВЕТЫ");
+                tg.MainButton.show();
+
+                const isReady = nameInput.value.trim() !== '' && contactInput.value.trim() !== '';
+                if (isReady) tg.MainButton.enable();
+                else tg.MainButton.disable();
+            }
+        }
+
+        document.querySelectorAll('.btn-quiz').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const clickedButton = e.currentTarget;
+                clickedButton.classList.add('selected');
+                advanceStep(clickedButton.dataset.value, clickedButton.dataset.key);
+                setTimeout(() => clickedButton.classList.remove('selected'), 300);
+            });
+        });
+
+        // --- ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ---
+        window.onload = function() {
+            // Настраиваем основную кнопку на отправку данных
+            tg.onEvent('mainButtonClicked', sendQuizDataToBot);
+
+            // Шаг 2: Читаем параметры из URL для персонализации
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const userDataParam = urlParams.get('user_data');
+                if (userDataParam) {
+                    const decodedStr = atob(userDataParam);
+                    const userData = JSON.parse(decodedStr);
+                    if (userData.first_name) {
+                        welcomeMessageEl.textContent = `Привет, ${userData.first_name}!`;
+                        // Можно сразу подставить имя в поле, если оно есть
+                        if (nameInput.value === '') {
+                           nameInput.value = userData.first_name;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Не удалось прочитать данные пользователя:", e);
+                welcomeMessageEl.textContent = 'Добро пожаловать!';
+            }
+
+            // Настройка полей ввода
+            nameInput.addEventListener('input', updateMainButtonState);
+            contactInput.addEventListener('input', updateMainButtonState);
+
+            // Начальная анимация
+            gsap.set(quizSteps, { visibility: 'hidden' });
+            gsap.set(document.querySelector('.quiz-step[data-step="1"]'), { visibility: 'visible', opacity: 1 });
+
+            gsap.to(quizContainer, {
+                opacity: 1, y: 0, duration: 0.8, delay: 0.1, ease: 'power3.out',
+                onStart: () => updateUI(true)
+            });
+        };
+    </script>
+</body>
+</html>
+
