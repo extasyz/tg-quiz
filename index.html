@@ -135,6 +135,16 @@
             <div data-step="3" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 3 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="нужен ли дизайн?"></p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="design" data-value="from scratch"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>Да, с нуля</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="design" data-value="has mockups"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Есть UI-кит / макеты</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="design" data-value="not required"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>Не требуется</button></div></div>
             <div data-step="4" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 4 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="какие сроки?"></p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="deadline" data-value="urgent"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2z"></polygon></svg>Срочно (до 2 недель)</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="deadline" data-value="standard"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>Стандартно (1-2 месяца)</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="deadline" data-value="flexible"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><path d="M20 6 9 17l-5-5"></path></svg>Гибкие сроки</button></div></div>
             <div data-step="5" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 5 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="ожидаемый бюджет?"></p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="< 500$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-4a4 4 0 0 0 0 8h4"/><path d="M12 4v4m0 8v4"/></svg><span class="text-green-400 font-medium mr-2">Start</span> < 500$</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="500$ - 3000$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/><path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/></svg><span class="text-yellow-400 font-medium mr-2">Medium</span> 500$ - 3000$</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="> 3000$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="text-red-400 font-medium mr-2">Pro</span> > 3000$</button></div></div>
+
+            <!-- ШАГ 6: ЭКРАН ПОДТВЕРЖДЕНИЯ (НОВЫЙ) -->
+            <div data-step="6" class="quiz-step">
+                <p class="text-xs font-medium mb-4 text-indigo-400 step-info">финал: обзор</p>
+                <p class="text-xl mb-6 font-extrabold text-white step-title" data-title="проверьте ваши ответы перед отправкой"></p>
+                <div id="review-summary" class="space-y-3 p-4 bg-gray-900/50 rounded-xl border border-indigo-700/30">
+                    <p class="text-gray-400">Сводка будет сгенерирована...</p>
+                </div>
+                <p class="text-sm text-gray-500 mt-6">Если хотите изменить ответ, нажмите **«← Назад»**.</p>
+            </div>
         </div>
 
         <div class="mt-8 flex justify-between">
@@ -149,9 +159,18 @@
         tg.ready();
         tg.expand();
 
-        const steps = 5;
+        const steps = 6; // ИЗМЕНЕНО: теперь 6 шагов (5 вопросов + 1 обзор)
         let currentStep = 1;
         const quizData = {};
+
+        // Объект для генерации красивых заголовков на экране обзора
+        const questionLabels = {
+            project_type: "Что нужно сделать?",
+            has_spec: "Есть ли ТЗ или описание?",
+            design: "Нужен ли дизайн?",
+            deadline: "Какие сроки?",
+            budget: "Ожидаемый бюджет?"
+        };
 
         const welcomeScreen = document.getElementById('welcome-screen');
         const startBtn = document.getElementById('start-btn');
@@ -160,8 +179,47 @@
         const prevBtn = document.getElementById('prev-btn');
         const progressBar = document.getElementById('progress-bar');
 
+
+        /**
+         * Генерирует и отображает сводку ответов на экране обзора (шаг 6).
+         */
+        function renderReviewScreen() {
+            const reviewSummary = document.getElementById('review-summary');
+            reviewSummary.innerHTML = '';
+
+            const allKeys = Object.keys(questionLabels);
+            let allAnswered = true; // Для дополнительной проверки надежности
+
+            allKeys.forEach(key => {
+                const title = questionLabels[key];
+                const value = quizData[key] || "❌ Не отвечено";
+                if (!quizData[key]) allAnswered = false;
+
+                const html = `
+                    <div class="flex justify-between items-center text-sm border-b border-gray-700/50 pb-2">
+                        <span class="text-indigo-300 font-medium">${title}</span>
+                        <span class="text-white font-bold text-right">${value}</span>
+                    </div>
+                `;
+                reviewSummary.insertAdjacentHTML('beforeend', html);
+            });
+
+            // Если вдруг пропущены ответы (что не должно произойти при нормальном flow)
+            if (!allAnswered) {
+                tg.showAlert("Обнаружены пропущенные ответы. Пожалуйста, вернитесь и заполните все шаги.");
+                tg.MainButton.disable();
+            } else {
+                tg.MainButton.enable(); // На всякий случай
+            }
+        }
+
         function updateProgressBar() {
-            const progress = currentStep > 1 ? ((currentStep - 1) / (steps - 1)) * 100 : 0;
+            // Прогресс считается только на шагах с вопросами (1-5)
+            const progressSteps = steps - 1;
+            const progress = currentStep > progressSteps
+                ? 100
+                : ((currentStep - 1) / progressSteps) * 100;
+
             gsap.to(progressBar, {
                 width: `${progress}%`,
                 duration: 0.4,
@@ -176,6 +234,11 @@
 
             const currentStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
             const titleEl = currentStepEl.querySelector('.step-title');
+
+            if (currentStep === steps) {
+                renderReviewScreen(); // Рендерим сводку на последнем шаге
+            }
+
             const titleText = titleEl.dataset.title;
             gsap.fromTo(titleEl, { text: "" }, { text: titleText, duration: 0.5, ease: 'none' });
         }
@@ -206,20 +269,11 @@
         function advanceStep(value, key) {
             if (value && key) quizData[key] = value;
 
-            // Сначала убеждаемся, что текущий шаг завершен, и только потом переходим дальше
-            const currentStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
-            const currentKey = currentStepEl.querySelector('.btn-quiz')?.dataset.key;
-
-            if (currentKey && !quizData[currentKey]) {
-                // Это предотвращает переход, если кнопка была нажата, но значение не сохранилось,
-                // что в вашем коде невозможно, но служит для контроля
-                return;
-            }
+            // Проверка: мы должны перейти на следующий шаг, если это не последний вопрос
+            const lastQuestionStep = steps - 1;
 
             if (currentStep < steps) {
                 transitionStep(currentStep + 1, 'forward');
-            } else if (currentStep === steps) {
-                updateMainButtonState();
             }
         }
 
@@ -231,6 +285,8 @@
         prevBtn.addEventListener('click', prevStep);
 
         function sendQuizDataToBot() {
+            if (currentStep !== steps) return; // Защита: отправка только с последнего шага
+
             try {
                 // Показываем индикатор загрузки
                 tg.MainButton.showProgress();
@@ -240,13 +296,11 @@
                 tg.sendData(jsonData);
 
                 // *** ИСПРАВЛЕНИЕ: Закрываем Web App сразу после отправки данных. ***
-                // Это гарантирует, что индикатор загрузки Web App не будет висеть,
-                // а пользователь увидит ответ от бота в чате.
                 setTimeout(() => {
                     if (tg.isExpanded) {
                         tg.close();
                     }
-                }, 100); // Небольшая задержка, чтобы успеть отправить данные
+                }, 100);
 
             } catch (e) {
                 // В случае ошибки скрываем индикатор загрузки и показываем сообщение
@@ -256,8 +310,9 @@
         }
 
         function updateMainButtonState() {
+            // Главная Кнопка теперь используется только на последнем шаге (обзор)
             if (currentStep === steps) {
-                tg.MainButton.setText("ПОДТВЕРДИТЬ И ОТПРАВИТЬ");
+                tg.MainButton.setText("ПОДТВЕРДИТЬ И ОТПРАВИТЬ →"); // Улучшенный текст
                 tg.MainButton.show();
                 tg.MainButton.enable();
                 tg.MainButton.setParams({ color: tg.themeParams.button_color || '#6366f1' });
@@ -271,16 +326,14 @@
                 // Добавляем эффект нажатия
                 gsap.to(e.currentTarget, { scale: 0.98, duration: 0.1, yoyo: true, repeat: 1 });
 
-                // Сначала очищаем выбор для текущего шага (визуальная "чистка")
+                // 1. Очищаем выбор и выделяем новую кнопку
                 const currentKey = e.currentTarget.dataset.key;
                 document.querySelectorAll(`.btn-quiz[data-key="${currentKey}"]`).forEach(btn => {
                     btn.classList.remove('selected', 'ring-2', 'ring-indigo-500/70');
                 });
-
-                // Выделяем выбранную кнопку
                 e.currentTarget.classList.add('selected', 'ring-2', 'ring-indigo-500/70');
 
-                // Переход к следующему шагу
+                // 2. Переход к следующему шагу
                 advanceStep(e.currentTarget.dataset.value, currentKey);
             });
         });
@@ -314,12 +367,10 @@
             }
 
             try {
-                // Чтение данных пользователя из URL, если они были переданы при открытии Web App
+                // Чтение данных пользователя из URL
                 const urlParams = new URLSearchParams(window.location.search);
                 const userDataParam = urlParams.get('user_data');
                 if (userDataParam) {
-                    // Декодируем base64, а затем парсим JSON
-                    // Добавлено: замена символов, чтобы корректно декодировать urlsafe base64
                     const userDataJson = atob(userDataParam.replace(/-/g, '+').replace(/_/g, '/'));
                     const userData = JSON.parse(userDataJson);
                     if (userData.first_name) {
