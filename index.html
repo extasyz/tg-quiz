@@ -13,7 +13,9 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- Шрифт Unbounded -->
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
+        /* ВОССТАНОВЛЕННЫЕ СТИЛИ */
         @keyframes pulse-bg {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -29,7 +31,7 @@
             font-family: 'Unbounded', sans-serif;
             background-color: #000000;
             color: #e5e5e5;
-            /* Убедитесь, что градиент заполняет всю область */
+            /* Неоновый градиентный фон */
             background: linear-gradient(-45deg, #000000, #0a0a0a, #000000, #1a112a);
             background-size: 400% 400%;
             animation: pulse-bg 15s ease infinite;
@@ -56,6 +58,7 @@
             background: #7173f5;
         }
         #quiz-container {
+            /* Полупрозрачный фон с блюром и неоновой рамкой */
             background-color: rgba(13, 13, 13, 0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -65,7 +68,6 @@
             opacity: 0;
             transform: translateY(20px);
             visibility: hidden;
-            /* Убедитесь, что контейнер имеет вертикальный скролл на маленьких экранах, если он нужен */
             max-height: calc(100vh - 2rem);
             overflow-y: auto;
         }
@@ -83,14 +85,12 @@
             border-radius: 9999px;
             transition: width 0.5s ease-out;
         }
-        /* Увеличение минимальной высоты для лучшего восприятия на мобильных устройствах */
         #quiz-steps { position: relative; min-height: 420px; }
         .quiz-step { position: absolute; top: 0; left: 0; width: 100%; transition: none !important; }
         .btn-quiz {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid #2a2a2a;
             background-color: #1a1a1a;
-            /* Увеличение области касания на мобильных устройствах */
             min-height: 48px;
         }
         .btn-quiz:hover, .btn-quiz.selected {
@@ -98,6 +98,7 @@
             border-color: #6366f1;
             box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
             transform: translateY(-2px);
+            /* Используем Tailwind ring для дополнительного эффекта */
             @apply ring-2 ring-indigo-500/70;
         }
         .icon { margin-right: 0.75rem; width: 24px; height: 24px; flex-shrink: 0; }
@@ -133,7 +134,7 @@
             <div data-step="2" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 2 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="есть ТЗ или описание?"></p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="has_spec" data-value="yes"><span class="icon text-green-500 font-bold text-xl leading-none flex justify-center items-center">✓</span> Да, все готово</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="has_spec" data-value="draft / idea"><span class="icon text-yellow-500 font-bold text-xl leading-none flex justify-center items-center">✎</span> Черновик / Есть идея</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="has_spec" data-value="no, help needed"><span class="icon text-red-500 font-bold text-xl leading-none flex justify-center items-center">✗</span> Нет, нужна помощь</button></div></div>
             <div data-step="3" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 3 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="нужен ли дизайн?"></p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="design" data-value="from scratch"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>Да, с нуля</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="design" data-value="has mockups"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>Есть UI-кит / макеты</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="design" data-value="not required"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>Не требуется</button></div></div>
             <div data-step="4" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 4 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="какие сроки?"></p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="deadline" data-value="urgent"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2z"></polygon></svg>Срочно (до 2 недель)</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="deadline" data-value="standard"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>Стандартно (1-2 месяца)</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="deadline" data-value="flexible"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-400"><path d="M20 6 9 17l-5-5"></path></svg>Гибкие сроки</button></div></div>
-            <div data-step="5" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 5 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="ожидаемый бюджет?"></p><div class="space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="< 500$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-4a4 4 0 0 0 0 8h4"/><path d="M12 4v4m0 8v4"/></svg><span class="text-green-400 font-medium mr-2">Start</span> < 500$</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="500$ - 3000$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/><path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/></svg><span class="text-yellow-400 font-medium mr-2">Medium</span> 500$ - 3000$</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="> 3000$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="text-red-400 font-medium mr-2">Pro</span> > 3000$</button></div></div>
+            <div data-step="5" class="quiz-step"><p class="text-xs font-medium mb-4 text-gray-500 step-info">шаг 5 / 5</p><p class="text-xl mb-6 font-extrabold text-white step-title" data-title="ожидаемый бюджет?"></p><div class="space-space-y-4"><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="< 500$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-4a4 4 0 0 0 0 8h4"/><path d="M12 4v4m0 8v4"/></svg><span class="text-green-400 font-medium mr-2">Start</span> < 500$</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="500$ - 3000$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/><path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/></svg><span class="text-yellow-400 font-medium mr-2">Medium</span> 500$ - 3000$</button><button class="btn-quiz w-full p-4 text-left rounded-xl flex items-center" data-key="budget" data-value="> 3000$"><svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="text-red-400 font-medium mr-2">Pro</span> > 3000$</button></div></div>
 
             <!-- ШАГ 6: ЭКРАН ПОДТВЕРЖДЕНИЯ (НОВЫЙ) -->
             <div data-step="6" class="quiz-step">
@@ -158,7 +159,7 @@
         tg.ready();
         tg.expand();
 
-        const steps = 6; // ИЗМЕНЕНО: теперь 6 шагов (5 вопросов + 1 обзор)
+        const steps = 6; // Теперь 6 шагов (5 вопросов + 1 обзор)
         let currentStep = 1;
         const quizData = {};
 
@@ -283,7 +284,7 @@
         prevBtn.addEventListener('click', prevStep);
 
         /**
-         * Кодирует ответы в строку, затем в Base64 и отправляет команду боту.
+         * Передает JSON-строку с ответами обратно в Telegram Bot.
          */
         function sendQuizDataToBot() {
             if (currentStep !== steps) return;
@@ -291,30 +292,16 @@
             try {
                 tg.MainButton.showProgress();
 
-                // 1. Кодирование данных в компактную строку (ключ_значение-ключ_значение...)
-                const encodedString = Object.keys(quizData)
-                    .map(key => `${key}_${quizData[key]}`)
-                    .join('-');
+                // 1. Формирование JSON-строки из объекта quizData
+                const jsonData = JSON.stringify(quizData);
 
-                // 2. Кодирование всей строки в Base64 URL Safe
-                const base64Data = btoa(encodedString)
-                    .replace(/\+/g, '-')
-                    .replace(/\//g, '_')
-                    .replace(/=+$/, '');
+                // 2. Отправка данных боту через sendData (Telegram автоматически закроет Web App)
+                tg.sendData(jsonData);
 
-                // 3. Формирование команды /quiz_send_...
-                const command = `/quiz_send_${base64Data}`;
-
-                // 4. Отправка команды боту через sendData
-                // Telegram автоматически "печатает" и отправляет эту команду в чат.
-                tg.sendData(command);
-
-                // 5. Закрытие Web App для быстрой "очистки"
+                // Дополнительный вызов на случай, если tg.sendData() не закроет Web App моментально
                 setTimeout(() => {
-                    if (tg.isExpanded) {
-                        tg.close();
-                    }
-                }, 100);
+                    tg.MainButton.hideProgress();
+                }, 500);
 
             } catch (e) {
                 tg.MainButton.hideProgress();
@@ -384,7 +371,10 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const userDataParam = urlParams.get('user_data');
                 if (userDataParam) {
-                    const userDataJson = atob(userDataParam.replace(/-/g, '+').replace(/_/g, '/'));
+                    // Заменяем Web Safe Base64 обратно на стандартный
+                    const base64String = userDataParam.replace(/-/g, '+').replace(/_/g, '/');
+                    // Добавляем padding, если отсутствует
+                    const userDataJson = atob(base64String + '==='.slice((base64String.length * 3) % 4 || 3));
                     const userData = JSON.parse(userDataJson);
                     if (userData.first_name) {
                         welcomeTitle.textContent = `Привет, ${userData.first_name}!`;
