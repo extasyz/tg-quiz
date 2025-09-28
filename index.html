@@ -33,7 +33,6 @@
             background: linear-gradient(-45deg, #000000, #0a0a0a, #000000, #1a112a);
             background-size: 400% 400%;
             animation: pulse-bg 15s ease infinite;
-            /* Убран overflow: hidden для лучшей совместимости на мобильных устройствах */
         }
         #welcome-screen {
             position: absolute;
@@ -269,7 +268,6 @@
         function advanceStep(value, key) {
             if (value && key) quizData[key] = value;
 
-            // Проверка: мы должны перейти на следующий шаг, если это не последний вопрос
             const lastQuestionStep = steps - 1;
 
             if (currentStep < steps) {
@@ -284,18 +282,34 @@
         }
         prevBtn.addEventListener('click', prevStep);
 
+        /**
+         * Кодирует ответы в строку, затем в Base64 и отправляет команду боту.
+         */
         function sendQuizDataToBot() {
-            if (currentStep !== steps) return; // Защита: отправка только с последнего шага
+            if (currentStep !== steps) return;
 
             try {
-                // Показываем индикатор загрузки
                 tg.MainButton.showProgress();
-                const jsonData = JSON.stringify(quizData);
 
-                // Отправка данных обратно в Telegram Bot
-                tg.sendData(jsonData);
+                // 1. Кодирование данных в компактную строку (ключ_значение-ключ_значение...)
+                const encodedString = Object.keys(quizData)
+                    .map(key => `${key}_${quizData[key]}`)
+                    .join('-');
 
-                // *** ИСПРАВЛЕНИЕ: Закрываем Web App сразу после отправки данных. ***
+                // 2. Кодирование всей строки в Base64 URL Safe
+                const base64Data = btoa(encodedString)
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=+$/, '');
+
+                // 3. Формирование команды /quiz_send_...
+                const command = `/quiz_send_${base64Data}`;
+
+                // 4. Отправка команды боту через sendData
+                // Telegram автоматически "печатает" и отправляет эту команду в чат.
+                tg.sendData(command);
+
+                // 5. Закрытие Web App для быстрой "очистки"
                 setTimeout(() => {
                     if (tg.isExpanded) {
                         tg.close();
@@ -303,7 +317,6 @@
                 }, 100);
 
             } catch (e) {
-                // В случае ошибки скрываем индикатор загрузки и показываем сообщение
                 tg.MainButton.hideProgress();
                 tg.showAlert(`Произошла ошибка при отправке: ${e.toString()}`);
             }
