@@ -29,11 +29,11 @@
             font-family: 'Unbounded', sans-serif;
             background-color: #000000;
             color: #e5e5e5;
+            /* Убедитесь, что градиент заполняет всю область */
             background: linear-gradient(-45deg, #000000, #0a0a0a, #000000, #1a112a);
             background-size: 400% 400%;
             animation: pulse-bg 15s ease infinite;
-            min-height: 100vh;
-            overflow: hidden;
+            /* Убран overflow: hidden для лучшей совместимости на мобильных устройствах */
         }
         #welcome-screen {
             position: absolute;
@@ -66,6 +66,9 @@
             opacity: 0;
             transform: translateY(20px);
             visibility: hidden;
+            /* Убедитесь, что контейнер имеет вертикальный скролл на маленьких экранах, если он нужен */
+            max-height: calc(100vh - 2rem);
+            overflow-y: auto;
         }
         #progress-bar-container {
             width: 100%;
@@ -81,12 +84,15 @@
             border-radius: 9999px;
             transition: width 0.5s ease-out;
         }
-        #quiz-steps { position: relative; min-height: 380px; }
+        /* Увеличение минимальной высоты для лучшего восприятия на мобильных устройствах */
+        #quiz-steps { position: relative; min-height: 420px; }
         .quiz-step { position: absolute; top: 0; left: 0; width: 100%; transition: none !important; }
         .btn-quiz {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid #2a2a2a;
             background-color: #1a1a1a;
+            /* Увеличение области касания на мобильных устройствах */
+            min-height: 48px;
         }
         .btn-quiz:hover, .btn-quiz.selected {
             background-color: #252525;
@@ -102,19 +108,22 @@
         .step-title { min-height: 3rem; }
     </style>
 </head>
-<body class="p-4 sm:p-8 min-h-screen flex justify-center items-start pt-10">
+<!-- Централизация содержимого на всех устройствах -->
+<body class="p-4 min-h-screen flex justify-center items-center">
 
-    <div id="welcome-screen">
+    <div id="welcome-screen" class="p-4">
         <h1 id="welcome-title" class="text-4xl sm:text-5xl font-bold tracking-tighter text-white mb-4">Привет!</h1>
         <p class="text-gray-400 max-w-sm mb-8">Ответьте на 5 простых вопросов, чтобы мы могли рассчитать стоимость вашего проекта.</p>
         <button id="start-btn" class="text-white font-bold py-3 px-8 rounded-full text-lg">Начать</button>
     </div>
 
-    <div id="quiz-container" class="w-full max-w-md sm:max-w-lg p-6 sm:p-8 relative">
+    <!-- Контейнер квиза адаптирован для мобильных устройств: w-full с ограничением max-w-md -->
+    <div id="quiz-container" class="w-full max-w-md p-6 relative">
         <div id="header" class="mb-4">
             <div id="progress-bar-container" class="mb-4">
                 <div id="progress-bar"></div>
             </div>
+            <!-- Уменьшение размера шрифта на мобильных, если необходимо, но 2xl/3xl хорошо работают -->
             <h1 class="text-2xl sm:text-3xl font-bold tracking-tighter text-white">
                 <span class="text-indigo-400">узнай цену за 5 кликов</span>
             </h1>
@@ -196,9 +205,20 @@
 
         function advanceStep(value, key) {
             if (value && key) quizData[key] = value;
+
+            // Сначала убеждаемся, что текущий шаг завершен, и только потом переходим дальше
+            const currentStepEl = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
+            const currentKey = currentStepEl.querySelector('.btn-quiz')?.dataset.key;
+
+            if (currentKey && !quizData[currentKey]) {
+                // Это предотвращает переход, если кнопка была нажата, но значение не сохранилось,
+                // что в вашем коде невозможно, но служит для контроля
+                return;
+            }
+
             if (currentStep < steps) {
                 transitionStep(currentStep + 1, 'forward');
-            } else {
+            } else if (currentStep === steps) {
                 updateMainButtonState();
             }
         }
@@ -212,10 +232,14 @@
 
         function sendQuizDataToBot() {
             try {
+                // Показываем, что кнопка нажата и идет отправка
                 tg.MainButton.showProgress();
                 const jsonData = JSON.stringify(quizData);
+
+                // Отправка данных обратно в Telegram Bot
                 tg.sendData(jsonData);
             } catch (e) {
+                // Используем tg.showAlert вместо console.error, чтобы пользователь увидел ошибку
                 tg.showAlert(`Произошла ошибка при отправке: ${e.toString()}`);
                 tg.MainButton.hideProgress();
             }
@@ -226,6 +250,7 @@
                 tg.MainButton.setText("ПОДТВЕРДИТЬ И ОТПРАВИТЬ");
                 tg.MainButton.show();
                 tg.MainButton.enable();
+                tg.MainButton.setParams({ color: tg.themeParams.button_color || '#6366f1' });
             } else {
                 tg.MainButton.hide();
             }
@@ -233,8 +258,20 @@
 
         document.querySelectorAll('.btn-quiz').forEach(button => {
             button.addEventListener('click', (e) => {
+                // Добавляем эффект нажатия
                 gsap.to(e.currentTarget, { scale: 0.98, duration: 0.1, yoyo: true, repeat: 1 });
-                advanceStep(e.currentTarget.dataset.value, e.currentTarget.dataset.key);
+
+                // Сначала очищаем выбор для текущего шага (визуальная "чистка")
+                const currentKey = e.currentTarget.dataset.key;
+                document.querySelectorAll(`.btn-quiz[data-key="${currentKey}"]`).forEach(btn => {
+                    btn.classList.remove('selected', 'ring-2', 'ring-indigo-500/70');
+                });
+
+                // Выделяем выбранную кнопку
+                e.currentTarget.classList.add('selected', 'ring-2', 'ring-indigo-500/70');
+
+                // Переход к следующему шагу
+                advanceStep(e.currentTarget.dataset.value, currentKey);
             });
         });
 
@@ -261,11 +298,19 @@
         window.onload = function() {
             tg.onEvent('mainButtonClicked', sendQuizDataToBot);
 
+            // Настройка цветов Telegram MainButton в соответствии с темой
+            if (tg.themeParams && tg.themeParams.button_color) {
+                tg.MainButton.setParams({ color: tg.themeParams.button_color, text_color: tg.themeParams.button_text_color });
+            }
+
             try {
+                // Чтение данных пользователя из URL, если они были переданы при открытии Web App
                 const urlParams = new URLSearchParams(window.location.search);
                 const userDataParam = urlParams.get('user_data');
                 if (userDataParam) {
-                    const userData = JSON.parse(atob(userDataParam));
+                    // Декодируем base64, а затем парсим JSON
+                    const userDataJson = atob(userDataParam.replace(/-/g, '+').replace(/_/g, '/'));
+                    const userData = JSON.parse(userDataJson);
                     if (userData.first_name) {
                         welcomeTitle.textContent = `Привет, ${userData.first_name}!`;
                     }
@@ -284,4 +329,3 @@
     </script>
 </body>
 </html>
-
