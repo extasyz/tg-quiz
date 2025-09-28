@@ -232,16 +232,26 @@
 
         function sendQuizDataToBot() {
             try {
-                // Показываем, что кнопка нажата и идет отправка
+                // Показываем индикатор загрузки
                 tg.MainButton.showProgress();
                 const jsonData = JSON.stringify(quizData);
 
                 // Отправка данных обратно в Telegram Bot
                 tg.sendData(jsonData);
+
+                // *** ИСПРАВЛЕНИЕ: Закрываем Web App сразу после отправки данных. ***
+                // Это гарантирует, что индикатор загрузки Web App не будет висеть,
+                // а пользователь увидит ответ от бота в чате.
+                setTimeout(() => {
+                    if (tg.isExpanded) {
+                        tg.close();
+                    }
+                }, 100); // Небольшая задержка, чтобы успеть отправить данные
+
             } catch (e) {
-                // Используем tg.showAlert вместо console.error, чтобы пользователь увидел ошибку
-                tg.showAlert(`Произошла ошибка при отправке: ${e.toString()}`);
+                // В случае ошибки скрываем индикатор загрузки и показываем сообщение
                 tg.MainButton.hideProgress();
+                tg.showAlert(`Произошла ошибка при отправке: ${e.toString()}`);
             }
         }
 
@@ -309,6 +319,7 @@
                 const userDataParam = urlParams.get('user_data');
                 if (userDataParam) {
                     // Декодируем base64, а затем парсим JSON
+                    // Добавлено: замена символов, чтобы корректно декодировать urlsafe base64
                     const userDataJson = atob(userDataParam.replace(/-/g, '+').replace(/_/g, '/'));
                     const userData = JSON.parse(userDataJson);
                     if (userData.first_name) {
